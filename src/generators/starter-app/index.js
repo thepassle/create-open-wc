@@ -8,7 +8,16 @@ const StarterAppMixin = subclass =>
   class extends BuildingMixin(TestingMixin(LintingMixin(subclass))) {
     async execute() {
       // before super to also affect the Mixin it applies
-      const { tagName, className } = await askTagInfo();
+      let tagName = '';
+      let className = '';
+
+      if(process.argv[3]) {
+        tagName = process.argv[3];
+        className = process.argv[3].replace(/-([a-z])/g, g => g[1].toUpperCase()).replace(/^\w/, c => c.toUpperCase());
+      } else {
+        ({ tagName, className } = await askTagInfo());
+      }
+
       this.templateData = { ...this.templateData, tagName, className };
       this._destinationPath = path.join(process.cwd(), tagName);
 
